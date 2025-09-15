@@ -1,8 +1,6 @@
 #include<iostream>
-#include <map>
 
 using namespace std;
-
 
 class Pokemon {
 public:   // access specifier
@@ -17,18 +15,18 @@ public:   // access specifier
     }
 
     // Constructor
-    Pokemon(string n, const int nr, string t) : name(n), number(nr), type(t) {}
+    Pokemon(string& n, const int nr, string& t) : name(n), number(nr), type(t) {}
+    Pokemon(string&& n, const int nr, string&& t) : name(std::move(n)), number(nr), type(std::move(t)) {}
 
     // Method
-    void selection() {
+     void selection() const {
         cout  << number << ". " << name << endl;
     }
-    void selected() {
+    void selected() const {
         cout << "You chose " << name << " A " << type << " choice." << endl;;
     }
 
 };
-
 
 int main(){
 
