@@ -10,6 +10,7 @@ public:   // access specifier
     int number;
     PokemonType type;
     string character;
+    int health;
 
 
     Pokemon() {
@@ -17,34 +18,97 @@ public:   // access specifier
         number = 0;
         type = PokemonType::Normal;
         character="";
+        health = 100;
 
     }
 
     // Constructor
-    Pokemon(string& n, const int nr, PokemonType t, string& c) : name(n), number(nr), type(t), character(c) {}
-    Pokemon(string&& n, const int nr, PokemonType t,string&& c) : name(std::move(n)), number(nr), type(t), character(std::move(c)) {}
+    Pokemon(string& n, const int nr, PokemonType t, string& c) : name(n), number(nr), type(t), character(c) {health = 100;}
+    Pokemon(string&& n, const int nr, PokemonType t,string&& c) : name(std::move(n)), number(nr), type(t), character(std::move(c)) {health = 100;}
+
+    void attack() const{ cout << name << "attacks with a powerful move!\n"; }
 
     // Method
      void selection() const {
         cout  << number << ". " << name << endl;
     }
     void selected() const {
-        cout << "Professor Oak: You chose " << name << " A " << character << " choice." << endl;;
+        cout << "Professor Oak: " << name << "! A " << character << " choice." << endl;;
     }
 
 };
 
-enum class PokemonChoice {
-    Bulbasaur,
-    Charmander,
-    Squirtle,
-    InvalidChoice,
+class Player {
+    public:
+    string name;
+    Pokemon pokemon;
+
+    Player(string& p_name):name(p_name){  cout << "hello " << name << endl;}
+    Player(string&& p_name):name(std::move(p_name)){cout << "hello " << name << endl;}
+
+    void choosePokemon(int choice) {
+
+        switch (choice) {
+            case 1:
+                pokemon=Pokemon( "Bulbasaur",1,PokemonType::Earth,"wise");
+                break;
+            case 2:
+                pokemon=Pokemon( "Charmander",2,PokemonType::Fire,"fiery");
+                break;
+            case 3:
+                pokemon=Pokemon( "Squirtle",3,PokemonType::Water,"cool");
+                break;
+            default:
+                cout << "Hmm, that doesn't seem right. Let me choose for you...\n" << endl;
+
+                pokemon=Pokemon("Pikachu",4,PokemonType::Electric,"humble");
+        }
+
+            pokemon.selected();
+    }
+
 };
 
+class ProfessorOak {
+    public:
+    string name;
+    string pokemons_choices[3]={
+        "1. Bulbasaur",
+        "2. Charmander",
+        "3. Squirtle"
+    };
+    ProfessorOak(string& p_name):name(p_name){}
+    ProfessorOak(string&& p_name):name(std::move(p_name)){}
+
+
+    void talk(const string& message) {
+        cout << name << " : " << message << endl;
+    }
+
+    void greetPlayer(Player &player) {
+        talk("Hello there! Welcome to the world of Pokemon!");
+        talk("My name is Oak. People call me the Pokemon Professor!");
+        talk("But enough about me. Let's talk about you!");
+    }
+
+    void offerPokemonChoices(Player &player) {
+
+        talk("Please choose a POKEMON. Enter the number:");
+
+        for (string p : pokemons_choices) {
+            cout << "   - "<<p << endl;
+        }
+
+        int choice;
+        cin >> choice;
+
+        player.choosePokemon(choice);
+    }
+
+};
 int main(){
 
-    PokemonChoice chosen_pokemon=PokemonChoice::InvalidChoice;
-    Pokemon pokemon;
+    ProfessorOak po= ProfessorOak("Professor Oak");
 
     string player_name;
 
@@ -54,45 +118,16 @@ int main(){
     // Read (input) from console
     cin >> player_name;
 
-    cout << "Great Start " << player_name << ", looks like you have understood the main() function properly now!" << endl;
+    auto* player = new Player(player_name);
 
-    int pokemon_id;
+    po.greetPlayer(*player);
+    po.offerPokemonChoices(*player);
 
-    Pokemon pokemons_choices[4]={
-        Pokemon( "Bulbasaur",1,PokemonType::Earth,"wise"),
-        Pokemon( "Charmander",2,PokemonType::Fire,"fiery"),
-        Pokemon( "Squirtle",3,PokemonType::Water,"cool"),
-        Pokemon("Pikachu",4,PokemonType::Electric,"humble")
-    };
+    po.talk(player->pokemon.name + " and you, " + player->name +", are going to be the best of friends!");
 
-    cout << "Hello! I am Professor Oak. Please choose a POKEMON. Enter the number:" << endl;
-
-    for (Pokemon p : pokemons_choices) {
-        if (p.number < 4) {
-            p.selection();
-        }
-    }
-
-    int choice;
-    cin >> choice;
-
-    if (choice>3 || choice<1){
-        cout << "Professor Oak: Hmm, that doesn't seem right. Let me choose for you...\n" << endl;
-        pokemon = pokemons_choices[3]; // Default if no valid choice is made
-        cout << "Professor Oak: Just kidding! Let's go with Pikachu, the surprise guest!\n";
-    }
-    else {
-        pokemon=pokemons_choices[choice-1];
-        pokemon.selected();
-    }
-
-    cout << "Ah, an excellent choice!" << endl;
-    cout << "But beware, Trainer," << endl;
-    cout << "this is only the beginning." << endl;
-    cout << "Your journey is about to unfold." << endl;
-    cout << "Now let’s see if you’ve got what it takes to keep going!" << endl;
-    cout << "Good luck, and remember… Choose wisely!"<< endl;
+    po.talk("Your journey begins now! Get ready to explore the vast world of Pokemon!");
 
 
+    delete player;
     return 0;
 }
