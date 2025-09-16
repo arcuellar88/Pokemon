@@ -2,34 +2,39 @@
 
 using namespace std;
 
+enum class PokemonType {Fire, Electric, Water, Earth, Normal};
+
 class Pokemon {
 public:   // access specifier
     string name;
     int number;
-    string type;
+    PokemonType type;
+    string character;
+
 
     Pokemon() {
         name = "";
         number = 0;
-        type = "";
+        type = PokemonType::Normal;
+        character="";
+
     }
 
     // Constructor
-    Pokemon(string& n, const int nr, string& t) : name(n), number(nr), type(t) {}
-    Pokemon(string&& n, const int nr, string&& t) : name(std::move(n)), number(nr), type(std::move(t)) {}
+    Pokemon(string& n, const int nr, PokemonType t, string& c) : name(n), number(nr), type(t), character(c) {}
+    Pokemon(string&& n, const int nr, PokemonType t,string&& c) : name(std::move(n)), number(nr), type(t), character(std::move(c)) {}
 
     // Method
      void selection() const {
         cout  << number << ". " << name << endl;
     }
     void selected() const {
-        cout << "Professor Oak: You chose " << name << " A " << type << " choice." << endl;;
+        cout << "Professor Oak: You chose " << name << " A " << character << " choice." << endl;;
     }
 
 };
 
-
-enum PokemonChoice {
+enum class PokemonChoice {
     Bulbasaur,
     Charmander,
     Squirtle,
@@ -38,7 +43,7 @@ enum PokemonChoice {
 
 int main(){
 
-    PokemonChoice chosen_pokemon=InvalidChoice;
+    PokemonChoice chosen_pokemon=PokemonChoice::InvalidChoice;
     Pokemon pokemon;
 
     string player_name;
@@ -54,10 +59,10 @@ int main(){
     int pokemon_id;
 
     Pokemon pokemons_choices[4]={
-        Pokemon( "Bulbasaur (Grass)",1,"wise"),
-        Pokemon( "Charmander (Fire)",2,"fiery"),
-        Pokemon( "Squirtle (Water)",3,"cool"),
-        Pokemon("Pikachu",4,"surprise")
+        Pokemon( "Bulbasaur",1,PokemonType::Earth,"wise"),
+        Pokemon( "Charmander",2,PokemonType::Fire,"fiery"),
+        Pokemon( "Squirtle",3,PokemonType::Water,"cool"),
+        Pokemon("Pikachu",4,PokemonType::Electric,"humble")
     };
 
     cout << "Hello! I am Professor Oak. Please choose a POKEMON. Enter the number:" << endl;
@@ -65,7 +70,6 @@ int main(){
     for (Pokemon p : pokemons_choices) {
         if (p.number < 4) {
             p.selection();
-
         }
     }
 
