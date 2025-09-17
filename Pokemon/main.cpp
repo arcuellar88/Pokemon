@@ -1,9 +1,9 @@
 #include<iostream>
 #include <cstdlib>
+#include "PokemonType.hpp"
 
 using namespace std;
 
-enum class PokemonType {Fire, Electric, Water, Earth, Normal};
 
 void clear_console() {
     system("clear");
@@ -286,8 +286,7 @@ private:
 
 };
 
-int main(){
-
+int main() {
     ProfessorOak po= ProfessorOak("Professor Oak");
 
     Player player = Player();
@@ -308,5 +307,4 @@ int main(){
     // Placeholder for where the game loop will start
     gameLoop(player);
     return 0;
-
-#include "header.hpp"
+}
