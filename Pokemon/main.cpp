@@ -1,17 +1,11 @@
 #include<iostream>
 #include <cstdlib>
 #include "PokemonType.hpp"
+#include "Utility.hpp"
+#include <limits>
+#include <string>
 
 using namespace std;
-
-
-void clear_console() {
-    system("clear");
-};
-
-void wait_for_enter() {
-    cin.get();
-};
 
 
 class Pokemon {
@@ -165,7 +159,7 @@ class ProfessorOak {
         cin >> player_name;
         player.name = player_name;
 
-        wait_for_enter(); // Skip default enter after user input
+        Utility::wait_for_enter(); // Skip default enter after user input
 
         talk("Ah, "+player.name+"! What a fantastic name!",1);
 
@@ -189,7 +183,7 @@ class ProfessorOak {
 
         player.choosePokemon(choice);
 
-        wait_for_enter(); // Skip default enter after user input
+        Utility::clear_input_buffer();// Skip default enter after user input
 
         talk(player.pokemon.name + " and you, " + player.name +", are going to be the best of friends!");
 
@@ -218,7 +212,7 @@ private:
     }
     void talk_with_pause(const string& voice, const string& message) const {
         cout << voice << " : " << message << " [ Press enter to continue...]";
-        wait_for_enter();
+        Utility::wait_for_enter();
     }
 
 
@@ -232,7 +226,7 @@ private:
 
     while (keepPlaying) {
         // Clear console before showing options
-        clear_console();
+        Utility::clear_console();
 
         // Display options to the player
         cout << "\nWhat would you like to do next, " << player.name << "?\n";
@@ -294,15 +288,15 @@ int main() {
     po.greetPlayer(player);
 
 
-    clear_console();
+    Utility::clear_console();
 
     po.offerPokemonChoices(player);
 
-    clear_console();
+    Utility::clear_console();
 
     po.explainQuest(player);
 
-    clear_console();
+    Utility::clear_console();
 
     // Placeholder for where the game loop will start
     gameLoop(player);
