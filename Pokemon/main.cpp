@@ -13,19 +13,41 @@ public:   // access specifier
     int health;
 
 
+    // Default Constructor
     Pokemon() {
-        name = "";
+        name="Pikachu";
         number = 0;
-        type = PokemonType::Normal;
+        type = PokemonType::Electric;
         character="";
-        health = 100;
+        health = 10;
 
+    }
+    // Copy constructor
+    Pokemon(const Pokemon &other) {
+        name = other.name;
+        number = other.number;
+        type = other.type;
+        character=other.character;
+        health = other.health;
     }
 
     // Constructor
+    Pokemon(string& n, PokemonType t, int h) : name(n), type(t), health(h) {character="";number=0;}
+    Pokemon(string&& n, PokemonType t,int h) : name(std::move(n)), type(t), health(h) {character="";number=0;}
+
     Pokemon(string& n, const int nr, PokemonType t, string& c) : name(n), number(nr), type(t), character(c) {health = 100;}
     Pokemon(string&& n, const int nr, PokemonType t,string&& c) : name(std::move(n)), number(nr), type(t), character(std::move(c)) {health = 100;}
 
+    Pokemon(string& n, const int nr, PokemonType t, int h) : name(n), number(nr), type(t), health(h) {character="";}
+    Pokemon(string&& n, const int nr, PokemonType t,int h) : name(std::move(n)), number(nr), type(t), health(h) {character="";}
+
+    // Destructor
+    ~Pokemon() {
+        cout << "Pokemon is getting destroyed"<< endl;
+        // Perform cleanup operations here, e.g., save player data to a file or log a message.
+    }
+
+    //Methods
     void attack() const{ cout << name << "attacks with a powerful move!\n"; }
 
     // Method
@@ -43,10 +65,32 @@ class Player {
     string name;
     Pokemon pokemon;
 
-    Player(string& p_name):name(p_name){  cout << "hello " << name << endl;}
+    // Default constructor
+    Player() {
+        name="Trainer";
+        pokemon = Pokemon();
+    }
+    Player(const string& p_name):name(p_name){  cout << "hello " << name << endl;}
     Player(string&& p_name):name(std::move(p_name)){cout << "hello " << name << endl;}
 
-    void choosePokemon(int choice) {
+    Player(const string& p_name, const Pokemon &p_pokemon) {
+        name=p_name;
+        pokemon=p_pokemon;
+        cout << "hello " << name << endl;
+    }
+
+    // Copy constructor
+    Player(const Player &other) {
+        name=other.name;
+        pokemon=other.pokemon;
+    }
+
+    //Destructor
+    ~Player() {
+        cout << "Player is getting destroyed" << endl;
+    }
+
+    void choosePokemon(const int choice) {
 
         switch (choice) {
             case 1:
@@ -106,7 +150,25 @@ class ProfessorOak {
     }
 
 };
+
+
 int main(){
+
+    Pokemon  b("Bulbasaur",2,PokemonType::Earth, 100);
+    Pokemon cb=b;
+
+    cout<< b.name << " "<< (int)b.type << " Health: " << b.health << endl;
+    cout<< cb.name << " "<< (int)cb.type <<  " Health: " << cb.health << endl;
+
+    cb.health=80;
+
+    cout<< b.name << " "<< (int)b.type << " Health: " << b.health << endl;
+    cout<< cb.name << " "<< (int)cb.type <<  " Health: " << cb.health << endl;
+
+
+    {
+        Pokemon squirtle("Squirtle",2, PokemonType::Water, 100); // Pokemon will be destroyed at the end of this scope
+    }
 
     ProfessorOak po= ProfessorOak("Professor Oak");
 
