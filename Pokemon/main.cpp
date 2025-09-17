@@ -1,8 +1,18 @@
 #include<iostream>
+#include <cstdlib>
 
 using namespace std;
 
 enum class PokemonType {Fire, Electric, Water, Earth, Normal};
+
+void clear_console() {
+    system("clear");
+};
+
+void wait_for_enter() {
+    cin.get();
+};
+
 
 class Pokemon {
 public:   // access specifier
@@ -43,7 +53,7 @@ public:   // access specifier
 
     // Destructor
     ~Pokemon() {
-        cout << "Pokemon is getting destroyed"<< endl;
+        //cout << "Pokemon is getting destroyed"<< endl;
         // Perform cleanup operations here, e.g., save player data to a file or log a message.
     }
 
@@ -54,7 +64,8 @@ public:   // access specifier
      void selection() const {
         cout  << number << ". " << name << endl;
     }
-    void selected() const {
+    void
+    selected() const {
         cout << "Professor Oak: " << name << "! A " << character << " choice." << endl;;
     }
 
@@ -87,7 +98,7 @@ class Player {
 
     //Destructor
     ~Player() {
-        cout << "Player is getting destroyed" << endl;
+        //cout << "Player is getting destroyed" << endl;
     }
 
     void choosePokemon(const int choice) {
@@ -125,71 +136,176 @@ class ProfessorOak {
     ProfessorOak(string&& p_name):name(std::move(p_name)){}
 
 
-    void talk(const string& message) {
-        cout << name << " : " << message << endl;
+    void talk(const string& message, const int wait=1) {
+
+        if (wait == 1) {
+            talk_with_pause(name, message);
+        }
+        else {
+            talk_without_pause(name, message);
+        }
+    }
+    void talk(const string& message, Player &player,const int wait=1) {
+        if (wait == 1) {
+            talk_with_pause(player.name, message);
+        }
+        else {
+            talk_without_pause(player.name, message);
+        }
     }
 
     void greetPlayer(Player &player) {
         talk("Hello there! Welcome to the world of Pokemon!");
         talk("My name is Oak. People call me the Pokemon Professor!");
         talk("But enough about me. Let's talk about you!");
+        talk("First, tell me, what’s your name? [Please Enter Your Name]:",0);
+        string player_name;
+
+        // Read (input) from console
+        cin >> player_name;
+        player.name = player_name;
+
+        wait_for_enter(); // Skip default enter after user input
+
+        talk("Ah, "+player.name+"! What a fantastic name!",1);
+
+        cout<<"H";
     }
 
     void offerPokemonChoices(Player &player) {
 
-        talk("Please choose a POKEMON. Enter the number:");
+        talk("You must be eager to start your adventure. But first, you’ll need a Pokemon of your own!");
+        talk("I have three Pokemon here with me. They’re all quite feisty!");
+        string choices="Choose wisely... [Enter the number]:\n";
+
 
         for (string p : pokemons_choices) {
-            cout << "   - "<<p << endl;
+           choices+="   - "+p+"\n";
         }
+        talk(choices,0);
 
         int choice;
         cin >> choice;
 
         player.choosePokemon(choice);
+
+        wait_for_enter(); // Skip default enter after user input
+
+        talk(player.pokemon.name + " and you, " + player.name +", are going to be the best of friends!");
+
+        talk("Your journey begins now! Get ready to explore the vast world of Pokemon!");
+
     }
+    void explainQuest(Player &player) {
+        talk("Oak-ay  "+player.name+", I am about to explain you about your upcoming grand adventure.");
+        talk("You see, becoming a Pokémon Master is no easy feat. It takes courage, wisdom, and a bit of luck.");
+        talk("Your mission, should you choose to accept it (and trust me, you really don’t have a choice) is to collect all the Pokémon Badges and conquer the Pokémon League.");
+        talk("Wait... that sounds a lot like every other Pokémon game out there.",player);
+        talk("Shhh! Don't break the fourth wall "+player.name+"! This is serious business.");
+        talk("To achieve this, you’ll need to battle wild Pokémon, challenge gym leaders, and of course, keep your Pokémon healthy at the PokeCenter.");
+        talk("Along the way, you'll capture new Pokémon to strengthen your team. Just remember—there’s a limit to how many Pokémon you can carry, so choose wisely!");
+        talk("Sounds like a walk in the park... right?",player);
+        talk("h! That’s what they all say! But beware, young Trainer, the path to victory is fraught with challenges. And if you lose a battle... well, let’s just say you'll be starting from square one.");
+        talk(", what do you say? Are you ready to become the next Pokémon Champion?");
+        talk("Ready as I’ll ever be, Professor!",player);
+        talk("at’s the spirit! Now, your journey begins.");
+        talk("t first... let's just pretend I didn't forget to set up the actual game loop... Ahem, onwards!");
+
+    }
+private:
+    void talk_without_pause(const string& voice, const string& message) const {
+        cout << voice << " : " << message  << endl;
+    }
+    void talk_with_pause(const string& voice, const string& message) const {
+        cout << voice << " : " << message << " [ Press enter to continue...]";
+        wait_for_enter();
+    }
+
+
 
 };
 
 
-int main(){
+  void gameLoop(Player &player) {
+    int choice;
+    bool keepPlaying = true;
 
-    Pokemon  b("Bulbasaur",2,PokemonType::Earth, 100);
-    Pokemon cb=b;
+    while (keepPlaying) {
+        // Clear console before showing options
+        clear_console();
 
-    cout<< b.name << " "<< (int)b.type << " Health: " << b.health << endl;
-    cout<< cb.name << " "<< (int)cb.type <<  " Health: " << cb.health << endl;
+        // Display options to the player
+        cout << "\nWhat would you like to do next, " << player.name << "?\n";
+        cout << "1. Battle Wild Pokémon\n";
+        cout << "2. Visit PokeCenter\n";
+        cout << "3. Challenge Gyms\n";
+        cout << "4. Enter Pokémon League\n";
+        cout << "5. Quit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    cb.health=80;
-
-    cout<< b.name << " "<< (int)b.type << " Health: " << b.health << endl;
-    cout<< cb.name << " "<< (int)cb.type <<  " Health: " << cb.health << endl;
+        // Clear the newline character left in the buffer after cin >> choice
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 
-    {
-        Pokemon squirtle("Squirtle",2, PokemonType::Water, 100); // Pokemon will be destroyed at the end of this scope
+        // Process the player's choice and display the corresponding message
+        switch (choice) {
+            case 1:
+                cout << "You look around... but all the wild Pokémon are on "
+                             "vacation. Maybe try again later?\n";
+                break;
+            case 2:
+                cout
+                    << "You head to the PokeCenter, but Nurse Joy is out on a coffee "
+                       "break. Guess your Pokémon will have to tough it out for now!\n";
+                break;
+            case 3:
+                cout << "You march up to the Gym, but it's closed for renovations. "
+                             "Seems like even Gym Leaders need a break!\n";
+                break;
+            case 4:
+                cout << "You boldly step towards the Pokémon League... but the "
+                             "gatekeeper laughs and says, 'Maybe next time, champ!'\n";
+                break;
+            case 5:
+                cout << "You try to quit, but Professor Oak's voice echoes: "
+                             "'There's no quitting in Pokémon training!'\n";
+                cout << "Are you sure you want to quit? (y/n): ";
+                char quitChoice;
+                cin >> quitChoice;
+                if (quitChoice == 'y' || quitChoice == 'Y') {
+                    keepPlaying = false;
+                }
+                break;
+            default:
+                cout << "That's not a valid choice. Try again!\n";
+                break;
+        }
     }
+    cout << "Goodbye, " << player.name << "! Thanks for playing!\n";
+
+};
+
+int main(){
 
     ProfessorOak po= ProfessorOak("Professor Oak");
 
-    string player_name;
+    Player player = Player();
 
-    // Write (output) to console
-    cout << "Enter your name: ";
-
-    // Read (input) from console
-    cin >> player_name;
-
-    auto* player = new Player(player_name);
-
-    po.greetPlayer(*player);
-    po.offerPokemonChoices(*player);
-
-    po.talk(player->pokemon.name + " and you, " + player->name +", are going to be the best of friends!");
-
-    po.talk("Your journey begins now! Get ready to explore the vast world of Pokemon!");
+    po.greetPlayer(player);
 
 
-    delete player;
+    clear_console();
+
+    po.offerPokemonChoices(player);
+
+    clear_console();
+
+    po.explainQuest(player);
+
+    clear_console();
+
+    // Placeholder for where the game loop will start
+    gameLoop(player);
     return 0;
 }
